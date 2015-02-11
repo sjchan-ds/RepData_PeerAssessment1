@@ -91,10 +91,17 @@ output:
 
 2. Process/transform the data (if necessary) into a format suitable for the current analysis
 
-```{r}
+
+```r
 activity <- read.csv("activity.csv")
 str(activity) ## examine the data structure 
+```
 
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : Factor w/ 61 levels "2012-10-01","2012-10-02",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
 ```
 
 ======================================================================================
@@ -104,40 +111,57 @@ str(activity) ## examine the data structure
 
     1. Calculate the total number of steps taken per day
 
-```{r Q1_1}
 
+```r
 activityDailySum <- aggregate(steps ~ date, data = activity, FUN=sum)
 
 ## examine the structure of new data frame activityDailySum that contains data of the total number of
 ## steps taken per day
 str(activityDailySum)
+```
 
-``` 
+```
+## 'data.frame':	53 obs. of  2 variables:
+##  $ date : Factor w/ 61 levels "2012-10-01","2012-10-02",..: 2 3 4 5 6 7 9 10 11 12 ...
+##  $ steps: int  126 11352 12116 13294 15420 11015 12811 9900 10304 17382 ...
+```
 
     2. If you do not understand the difference a histogram and a barplot,research the difference between
        them. Make a histogram of the total number of steps taken each day.
 
-```{r Q1_2}
+
+```r
 hist(activityDailySum$steps, xlab="Total steps per day", ylab="counts", 
                              main="Total number of steps taken each day", 
                              col="blue")
-
 ```
+
+![plot of chunk Q1_2](figure/Q1_2-1.png) 
 
    3. Calculate and report the mean and median of the total number of steps taken per day
 
-```{r Q1_3}
+
+```r
 ## The mean of the total number of steps taken per day
 meanStepsDaily <- mean(activityDailySum$steps)
 meanStepsDaily
+```
 
+```
+## [1] 10766.19
+```
 
+```r
 ## The meadian of the total number of steps taken per day
 medianStepsDaily <- median(activityDailySum$steps)
 medianStepsDaily
 ```
 
-**The mean and median of the total number of steps taken per day are `r meanStepsDaily` and `r medianStepsDaily` respectively.**
+```
+## [1] 10765
+```
+
+**The mean and median of the total number of steps taken per day are 1.0766189 &times; 10<sup>4</sup> and 10765 respectively.**
 
 ========================================================================================
 
@@ -146,28 +170,32 @@ medianStepsDaily
     1. Make a time series plot (i.e. type = "l", ) of the 5-minute interval (x-axis) and 
        the average number of steps taken, averaged across all days (y-axis)
        
-```{r Q2_1}
 
+```r
 ## intervalAveSteps: the average number steps per 5-minute interval, averaged across all days
 intervalAveSteps <- aggregate(steps ~ interval, data = activity, FUN=mean)
 
 plot(intervalAveSteps, type="l", xlab="5-minute interval",
           main="Average number of steps per 5 min-interval",
           col = "blue")
-
 ```
+
+![plot of chunk Q2_1](figure/Q2_1-1.png) 
 
     2. Which 5-minute interval, on average across all the days in the dataset, contains the
        maximum number of steps?
 
-```{r Q2_2}
 
+```r
 intervalMaxNumberSteps <- intervalAveSteps$interval[which.max(intervalAveSteps$steps)]
 intervalMaxNumberSteps
-
 ```
 
-**The `r intervalMaxNumberSteps ` th 5-minute interval, on average across all the days in the datasets,
+```
+## [1] 835
+```
+
+**The 835 th 5-minute interval, on average across all the days in the datasets,
 contains the maximum number of steps**
 
 ==================================================================================================
@@ -180,12 +208,17 @@ contains the maximum number of steps**
     1. Calculate and report the total number of missing values  in the dataset (i.e. the total
        number of rows with NAs) 
        
-```{r Q3_1}
+
+```r
 naNum <- sum(is.na(activity))
 naNum
 ```
 
-**The total number of missing values in the dataset (i.e. the total number of rows with NAs) is `r naNum`**
+```
+## [1] 2304
+```
+
+**The total number of missing values in the dataset (i.e. the total number of rows with NAs) is 2304**
 
     2. Devise a strategy for filling in all of the missing values 
        in the dataset. The strategy does not need to be sophisticated. For example, you could 
@@ -200,8 +233,8 @@ naNum
               - to reorder the temporary data frame because the plyr orders by group
               - named the reordered temporary data frame as 'activityNew'**
 
-```{r Q3_2} 
 
+```r
 ### define a function called 'imputeMean' to replace the missing data NA with
 ###    the mean of the total number of steps taken per day (daily mean steps)
 
@@ -211,14 +244,13 @@ naNum
 ### with the imputed data. 
      library(plyr)
      tmpDFRM <- ddply(activity, ~interval, transform, steps = imputeMean(steps))
-     
 ```
      
 
      3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
-```{r Q3_3}
 
+```r
 ### Need to reorder the new data frame "activityNew" due to the fact that plyr orders by group.
      activityNew <- tmpDFRM[with(tmpDFRM, order(date, interval)), ]
 ```
@@ -229,30 +261,50 @@ naNum
       the first part of the assignment? What is the impact of imputing missing data on the estimates 
       of the total daily number of steps?
 
-```{r Q3_4}
 
+```r
 activityNewDailySum <- aggregate(steps ~ date, data = activityNew, FUN=sum)
 
 ## examine the structure of reshaped data frame activityNewDailySum
 str(activityNewDailySum)
+```
 
+```
+## 'data.frame':	61 obs. of  2 variables:
+##  $ date : Factor w/ 61 levels "2012-10-01","2012-10-02",..: 1 2 3 4 5 6 7 8 9 10 ...
+##  $ steps: num  10766 126 11352 12116 13294 ...
+```
+
+```r
 ## plot a historgram of the total number of steps taken each day
 hist(activityNewDailySum$steps, xlab="Total steps per day with replaced mean", ylab="counts", 
                              main="Total number of steps taken each day", 
                              col="green")
+```
 
+![plot of chunk Q3_4](figure/Q3_4-1.png) 
 
+```r
 ## The mean of the total number of steps taken per day from the new data frame
 meanNewStepsDaily <- mean(activityNewDailySum$steps)
 meanNewStepsDaily
+```
 
+```
+## [1] 10766.19
+```
+
+```r
 ## The meadian of the total number of steps taken per day from the new data frame
 medianNewStepsDaily <- median(activityNewDailySum$steps) 
 medianNewStepsDaily
-
 ```
 
-    ### The mean and the median total number of steps taken per day is `r meanNewStepsDaily` and
+```
+## [1] 10766.19
+```
+
+    ### The mean and the median total number of steps taken per day is 1.0766189 &times; 10<sup>4</sup> and
     ###  'r medianNewStepDaily`. The impact of imputing missing data on the estimates of the total
     ###  daily number of steps is very small.
 
@@ -266,8 +318,8 @@ medianNewStepsDaily
    1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" 
       indicating whether a given date is a weekday or weekend day.
   
-```{r Q4_1}
 
+```r
          ## create a new factor variable "weekday" indicating whether a given date
          ## is a weekend or weekday and add to the new data set 'activityNew'
          
@@ -275,7 +327,6 @@ medianNewStepsDaily
          weekend <- (activityNew$weekday == "Saturday") | (activityNew$weekday == "Sunday")
          activityNew$weekday[weekend]  <- "weekend"
          activityNew$weekday[!weekend] <- "weekday"
-
 ```
            
    2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval 
@@ -283,15 +334,16 @@ medianNewStepsDaily
       days (y-axis). See the README file in the GitHub repository to see an example of what this 
      plot should look like using simulated data.
 
-```{r Q4_2}
 
+```r
   ## using command 'xyplot' in lattice package to plot the required figure.
        require("lattice")
 
        xyplot(steps ~ interval | weekday, data = activityNew, layout=c(1,2), type="l",
               ylab = 'Number of Steps')
+```
 
-```   
+![plot of chunk Q4_2](figure/Q4_2-1.png) 
 
 ===========================================================================================
 ============================================================================================
