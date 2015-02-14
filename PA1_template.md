@@ -83,7 +83,7 @@ output:
 >
 >
 
-**==============================================================================================================================**
+**================================================================================================================**
 
 
 ## Loading and preprocessing the data
@@ -280,7 +280,7 @@ naNum
 activityNewDailySum <- aggregate(steps ~ date, data = activityNew, FUN=sum)
 
 ## plot a historgram of the total number of steps taken each day
-hist(activityNewDailySum$steps, xlab="Total steps per day with replaced mean values", ylab="counts", 
+hist(activityNewDailySum$steps, xlab="Total steps per day with values of replaced mean", ylab="counts", 
                              main="Total number of steps taken each day", 
                              col="green")
 ```
@@ -308,7 +308,7 @@ medianNewStepsDaily
 ```
 
 **The mean and the median total number of steps taken per day is 1.0766189 &times; 10<sup>4</sup> and1.0766189 &times; 10<sup>4</sup>. The impact of imputing missing data on the estimates of the total
-daily number of steps is very small.**
+daily number of steps is not scientific significant.**
 
 
 **------------------------------------------------------------------------------------------------------------**
@@ -339,16 +339,28 @@ daily number of steps is very small.**
 
 
 ```r
-  ## using command 'xyplot' in lattice package to plot the required figure.
-       require("lattice")
+## make sure activityNew$weekday to be treated as a factor
+activityNew$weekday <- factor(activityNew$weekday)
+     
+## estimate the mean steps per day for weekdays and for weekend respectively       
+activityNewMWday <- aggregate(x = activityNew$steps, 
+                         by = list(activityNew$interval, activityNew$weekday),
+                         FUN = mean)
+                         
+## provided proper column names to the new data frame 'activityNewMWday
+colnames(activityNewMWday) <- c("interval", "weekday", "steps") 
 
-       xyplot(steps ~ interval | weekday, data = activityNew, layout=c(1,2), type="l",
-              ylab = 'Number of Steps')
+## make a panel plot containing a time series plot of 5-minutes intervals and the average number
+##  number of steps taken
+
+ library(lattice)
+ xyplot(steps ~ interval | weekday, data = activityNewMWday, layout=c(1,2), type="l",
+        ylab ="Number of steps")
 ```
 
 ![plot of chunk Q4_2](figure/Q4_2-1.png) 
 
-### Yes, there are differences in activity patterns between weekdays and weekends. The activities in the weekdays are more intenive than in weekend.
+### Yes, there are differences in activity patterns between weekdays and weekends. The activities in the weekdays are more intensive between 500 and 1000 5-minute than in weekend.
 
-**======================================================================================================================================**
+**================================================================================================================================**
 

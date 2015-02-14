@@ -192,11 +192,43 @@ medianNewStepsDaily
 ###      days (y-axis). See the README file in the GitHub repository to see an example of what this 
 ###      plot should look like using simulated data.
 
-       require("lattice")
-       activityNew_int <- activityNew[with(activityNew, order(interval, date)), ]
-       xyplot(steps ~ interval | weekday, data = activityNew_int, layout=c(1,2), type="l")
-       
 
+## change activityNew$weekday into factor
+activityNew$weekday <- factor(activityNew$weekday)
+     
+## estimate the mean steps per day for weekdays and for weekend        
+activityNewMWday <- aggregate(x = activityNew$steps, 
+                         by = list(activityNew$interval, activityNew$weekday),
+                         FUN = mean)
+                         
+## provided proper column names to the new data frame 'activityNewMWday
+colnames(activityNewMWday) <- c("interval", "weekday", "steps")                         
+ 
+## make a panel plot containing a time series plot of 5-minutes intervals and the average number
+##  number of steps taken
 
-
-
+ library(lattice)
+ xyplot(steps ~ interval | weekday, data = activityNewMWday, layout=c(1,2), type="l",
+        ylab ="Number of steps")
+    
+    
+      -----------------------------------------------------------------
+     ### alternative approach (to cross-check the usage of aggregate is okay
+      
+    
+      par(mfrow = c(2,1))
+     ## for (type in c("weekend", "weekday")) {
+      
+           type = "weekend"
+           steps.type_wend <- aggregate(steps ~ interval, data = activityNew, 
+                                   subset = activityNew$weekday == type, FUN = mean)
+           plot(steps.type_wend, type="l", main=type)
+           
+           type <- "weekday"   
+           steps.type_wday <- aggregate(steps ~ interval, data = activityNew, 
+                                   subset = activityNew$weekday == type, FUN = mean)
+           plot(steps.type_wday, type="l", main=type)
+           
+     ## }
+     
+  

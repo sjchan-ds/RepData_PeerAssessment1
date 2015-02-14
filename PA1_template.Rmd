@@ -83,7 +83,7 @@ output:
 >
 >
 
-**==============================================================================================================================**
+**================================================================================================================**
 
 
 ## Loading and preprocessing the data
@@ -267,7 +267,7 @@ medianNewStepsDaily
 ```
 
 **The mean and the median total number of steps taken per day is `r meanNewStepsDaily` and`r medianNewStepsDaily`. The impact of imputing missing data on the estimates of the total
-daily number of steps is very small.**
+daily number of steps is not scientific significant.**
 
 
 **------------------------------------------------------------------------------------------------------------**
@@ -298,15 +298,27 @@ daily number of steps is very small.**
 
 ```{r Q4_2}
 
-  ## using command 'xyplot' in lattice package to plot the required figure.
-       require("lattice")
+## make sure activityNew$weekday to be treated as a factor
+activityNew$weekday <- factor(activityNew$weekday)
+     
+## estimate the mean steps per day for weekdays and for weekend respectively       
+activityNewMWday <- aggregate(x = activityNew$steps, 
+                         by = list(activityNew$interval, activityNew$weekday),
+                         FUN = mean)
+                         
+## provided proper column names to the new data frame 'activityNewMWday
+colnames(activityNewMWday) <- c("interval", "weekday", "steps") 
 
-       xyplot(steps ~ interval | weekday, data = activityNew, layout=c(1,2), type="l",
-              ylab = 'Number of Steps')
+## make a panel plot containing a time series plot of 5-minutes intervals and the average number
+##  number of steps taken
+
+ library(lattice)
+ xyplot(steps ~ interval | weekday, data = activityNewMWday, layout=c(1,2), type="l",
+        ylab ="Number of steps")
 
 ```   
 
-### Yes, there are differences in activity patterns between weekdays and weekends. The activities in the weekdays are more intensive than in weekend.
+### Yes, there are differences in activity patterns between weekdays and weekends. The activities in the weekdays are more intensive between 500 and 1000 5-minute than in weekend.
 
-**======================================================================================================================================**
+**================================================================================================================================**
 
