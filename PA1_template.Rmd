@@ -93,7 +93,7 @@ output:
 
 2. Process/transform the data (if necessary) into a format suitable for the current analysis
 
-```{r}
+```{r echo=TRUE}
 ## create a data frame 'activity' to store the data set
 activity <- read.csv("activity.csv") ## read the data
 
@@ -109,7 +109,7 @@ activity <- read.csv("activity.csv") ## read the data
        1. Calculate the total number of steps taken per day
 
 
-```{r Q1_1}
+```{r Q1_1,echo=TRUE}
 ## define a data frame 'activityDailySum' to store the data of the total number steps taken per day
 activityDailySum <- aggregate(steps ~ date, data = activity, FUN=sum)
 
@@ -123,7 +123,7 @@ head(activityDailySum$steps, n=20)
        2. If you do not understand the difference a histogram and a barplot,research the difference between
           them. Make a histogram of the total number of steps taken each day.
 
-```{r Q1_2}
+```{r Q1_2,echo=TRUE}
 hist(activityDailySum$steps, xlab="Total steps per day", ylab="counts", 
                              main="Total number of steps taken each day", 
                              col="blue")
@@ -133,7 +133,7 @@ hist(activityDailySum$steps, xlab="Total steps per day", ylab="counts",
        3. Calculate and report the mean and median of the total number of steps taken per day
 
 
-```{r Q1_3}
+```{r Q1_3,echo=TRUE}
 ## The mean of the total number of steps taken per day
 meanStepsDaily <- mean(activityDailySum$steps)
 meanStepsDaily
@@ -154,7 +154,7 @@ medianStepsDaily
     1. Make a time series plot (i.e. type = "l", ) of the 5-minute interval (x-axis) and 
        the average number of steps taken, averaged across all days (y-axis)
        
-```{r Q2_1}
+```{r Q2_1,echo=TRUE}
 
 ## intervalAveSteps: the average number steps per 5-minute interval, averaged across all days
 intervalAveSteps <- aggregate(steps ~ interval, data = activity, FUN=mean)
@@ -170,7 +170,7 @@ plot(intervalAveSteps, type="l", xlab="5-minute interval",
     2. Which 5-minute interval, on average across all the days in the dataset, contains the
        maximum number of steps?
 
-```{r Q2_2}
+```{r Q2_2,echo=TRUE}
 ## find the 5-minute interval contains the maximum number of steps
 intervalMaxNumberSteps <- intervalAveSteps$interval[which.max(intervalAveSteps$steps)]
 intervalMaxNumberSteps
@@ -194,7 +194,7 @@ intervalMaxNumberSteps
     1. Calculate and report the total number of missing values  in the dataset (i.e. the total
        number of rows with NAs) 
        
-```{r Q3_1}
+```{r Q3_1,echo=TRUE}
 naNum <- sum(is.na(activity))
 naNum
 ```
@@ -216,7 +216,7 @@ naNum
                 - named the reordered temporary data frame as 'activityNew'
                 
 
-```{r Q3_2} 
+```{r Q3_2,echo=TRUE} 
 
 ### define a function called 'imputeMean' to replace the missing data NA with
 ###    the mean of the total number of steps taken per day (daily mean steps)
@@ -233,7 +233,7 @@ naNum
      3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
 
-```{r Q3_3}
+```{r Q3_3,echo=TRUE}
 
 ### Need to reorder the new data frame due to the fact that plyr orders by group.
      activityNew <- tmpDFRM[with(tmpDFRM, order(date, interval)), ]
@@ -245,7 +245,7 @@ naNum
       the first part of the assignment? What is the impact of imputing missing data on the estimates 
       of the total daily number of steps?
 
-```{r Q3_4}
+```{r Q3_4,echo=TRUE}
 ## define a new data frame 'activityNewDailySum' to store the data with the total number of 
 ## steps taken per day
 activityNewDailySum <- aggregate(steps ~ date, data = activityNew, FUN=sum)
@@ -280,7 +280,7 @@ daily number of steps is not scientific significant.**
       1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" 
          indicating whether a given date is a weekday or weekend day.
   
-```{r Q4_1}
+```{r Q4_1,echo=TRUE}
 
          ## create a new factor variable "weekday" indicating whether a given date
          ## is a weekend or weekday and add to the new data set 'activityNew'
@@ -296,7 +296,7 @@ daily number of steps is not scientific significant.**
            days (y-axis). See the README file in the GitHub repository to see an example of what this 
            plot should look like using simulated data.
 
-```{r Q4_2}
+```{r Q4_2,echo=TRUE}
 
 ## make sure activityNew$weekday to be treated as a factor
 activityNew$weekday <- factor(activityNew$weekday)
